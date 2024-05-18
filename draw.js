@@ -51,6 +51,8 @@ function drawLevel() {
                 default:
                     layerContext.fillStyle = "#00000000";
             }
+            layerContext.fillRect(xb, yb, blockSize, blockSize);
+          
         }
     }
 }
