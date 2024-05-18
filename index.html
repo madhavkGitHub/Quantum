@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+  <head>
+    <title>Mysteries of Quantum</title>
+    <link rel="stylesheet" href="static/styles.css" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+
+  </head>
+  <body onresize="adjustScreen()">
+    <canvas id="bgLayer" style="position: absolute;"></canvas>
+    <canvas id="playerLayer" style="position: absolute;"></canvas>
+    <canvas id="levelLayer" style="position: absolute;"></canvas>
+    <div id="timer" style="background: #ffffff88;">
+      00:00:00<br />
+      00:00:00
+    </div>
+    <div style="position: absolute; top: 0; right: 0; display: none;">
+      <button id="moreBtn" onclick="openMoreMenu()">...</button>
+    </div>
+
+    <div id="mainInfo">
+      <div>
+        "Mysteries of Quantum"<br />
+        Time Played: <span id="timePlayed">0 second</span><br />
+        Time in Branch: <span id="branchTime">0 second</span><br />
+        Deaths: <span id="deathCount">0</span><br />
+        <br />
+
+        <span id="endStat" style="display: none;">
+          Completion Time: <span id="timePlayedEnd">0 second</span><br />
+          Final Deaths: <span id="deathCountEnd">0</span><br />
+          <br />
+        </span>
+        [R] to force-respawn<br />
+        [shift] + [R] to go to hub<br />
+        [delete] to wipe save<br />
+        [\] to export save data<br />
+        [shift] + [\] to import save data<br>
+        <br />
+        </div>
+    </div>
+    <button id="infoOpen" onclick="openInfo();">
+        More    
+      </button>
+    <!-- useful for info -->
+    
+    <div id="wjTip" style="bottom:100%;">
+      Hey, so uh, to walljump,<br>you should hold jump while on the wall,<br>then move away from it. Have fun!
+    </div>
+    <textarea
+      style="
+        opacity: 0.01;
+        height: 0;
+        position: absolute;
+        z-index: -1;
+        display: none;
+      "
+      id="exportArea"
+    >
+export text</textarea
+    >
+  </body>
+
+  <script src="levels.js"></script>
+  <script src="static/options.js"></script>
+  <script src="draw.js"></script>
+  <script src="main.js"></script>
+</html>
