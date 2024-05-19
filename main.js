@@ -4,6 +4,8 @@ var gameSpeed = 1;
 var Xvar = -2000;
 var Yvar = -3000;
 var Zvar = -4000;
+var last_activation_xgate = 0;
+var last_activation_ygate = 0;
 
 var player = {
   spawnPoint: newSave(),
@@ -20,7 +22,13 @@ var player = {
   y: 0,
   xv: 0,
   yv: 0,
+  xvmult: 1,
+  yvmult: 1,
+  latest_xvmult: 1,
+  latest_yvmult: 1,
   g: 325,
+  solid: true,
+  latest_solidity: true,
   canJump: true,
   currentJumps: 0,
   maxJumps: 1, 
@@ -262,7 +270,7 @@ function nextFrame(timeStamp) {
           let onRight = false;
           let onTop = false;
           let onBottom = false;
-          if (hasHitbox.includes(type)) {
+          if ((hasHitbox.includes(type) || type == 5000 || type == -5000) && ((type == 5000 && player.solid == true) || (type == -5000 && player.solid == false) || (type != 5000 && type != -5000))) {
             let dx1 = Math.abs(
               (player.x - (x + 1) * blockSize) / Math.min(-1, player.xv)
             );
@@ -501,6 +509,21 @@ function nextFrame(timeStamp) {
             ) {
               switch (type) {
                 // Checkpoint
+                case -2000:
+                  if(timeStamp - last_activation_xgate >= 1000){
+                    last_activation_xgate = timeStamp;
+                    player.solid = !player.solid;
+                    shouldDrawLevel = true;
+                  }
+                  break;
+                case -3000:
+                    if(timeStamp - last_activation_ygate >= 1000){
+                      last_activation_ygate = timeStamp;
+                      player.xvmult = 2.255 - player.xvmult;
+                      player.yvmult = 2.03 - player.yvmult;
+                      shouldDrawLevel = true;
+                    }
+                    break;
                 case 3:
                   if (!isSpawn(x, y)) {
                     if (player.currentLevel === 8) {
@@ -525,6 +548,9 @@ function nextFrame(timeStamp) {
                       player.finalDeaths,
                       player.branchTime
                     ];
+                    player.latest_solidity = player.solid;
+                    player.latest_xvmult = player.xvmult;
+                    player.latest_yvmult = player.yvmult;
                     shouldDrawLevel = true;
                     save();
                   }
@@ -643,6 +669,8 @@ function nextFrame(timeStamp) {
         player.currentJumps--;
       }
     }
+    player.xv *= player.xvmult;
+    player.yv *= player.yvmult;
     // draw checks
     if (player.x != xprev || player.y != yprev) drawPlayer();
     if (
@@ -771,6 +799,9 @@ function respawn(death = true) {
   if (death) {
     player.deaths++;
     player.spawnPoint[11] = player.deaths;
+    player.solid = player.latest_solidity;
+    player.xvmult = player.latest_xvmult;
+    player.yvmult = player.latest_yvmult;
     id("deathCount").innerHTML = player.deaths;
   }
   player.spawnTimer = player.spawnDelay;

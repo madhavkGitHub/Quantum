@@ -69,74 +69,75 @@ function drawLevel() {
             let props = type;
             if (typeof type === "object") type = type[0];
             switch(type){
+              case X:
+                const X_img = new Image();
+                X_img.src = "static/gates/x.png";
+                X_img.onload = () => {
+                  backContext.drawImage( X_img, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
+                };
+                break;
+              case -5000:
+                const T_img = new Image();
+                if(player.solid == true) T_img.src = "static/gates/transparent.png";
+                else T_img.src = "static/gates/solid.png";
+                T_img.onload = () => {
+                  layerContext.drawImage( T_img, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
+                };
+                break;
+              case 5000:
+                  const S_img = new Image();
+                  if(player.solid == true) S_img.src = "static/gates/solid.png";
+                  else S_img.src = "static/gates/transparent.png";
+                  S_img.onload = () => {
+                    layerContext.drawImage( S_img, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
+                  };
+                  break;
+              case Y:
+                const Y_img = new Image();
+                Y_img.src = "static/gates/y.png";
+                Y_img.onload = () => {
+                  backContext.drawImage( Y_img, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
+                };
+                break;
+              case Z:
+                if (!player.triggers.includes(props[1])) {
+                  layerContext.fillStyle = "#D991BA";
+                } else layerContext.fillStyle = "#D991BA";
+                break;
+              case 1:
+                const img = new Image()
+                img.src = "static/blocks2.png"
+                img.onload = () => {
+                  layerContext.drawImage(img, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
+                }
+                break;
+              case 2:
+                const img3 = new Image()
+                img3.src = "static/death.png"
+                img3.onload = () => {
+                  layerContext.drawImage(img3, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
+                }
+                break;
+              case 3:
+                if (isSpawn(x, y)) {
+                  layerContext.fillStyle = "#00FFFF88";
+                } else layerContext.fillStyle = "#00888888";
+                const life = new Image();
+                life.src = "static/life.png";
+                life.onload = () => {
+                  layerContext.drawImage(life, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
+                };
+                break;
+              case -9:
+                layerContext.fillStyle = 'rgba(255,255,255,0)'
+                backContext.fillStyle = "rgba(255, 255, 255, 0)";
+                break;
 
-            case X:
-              const X_img = new Image()
-              X_img.src = "static/gates/x.png"
-              X_img.onload = () => {
-                layerContext.drawImage( X_img, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
-              }
-              break;
-            case Y:
-              if (!player.triggers.includes(props[1])) {
-                layerContext.fillStyle = "#D991BA";
-              } else layerContext.fillStyle = "#D991BA";
-              break;
-            case Z:
-              if (!player.triggers.includes(props[1])) {
-                layerContext.fillStyle = "#D991BA";
-              } else layerContext.fillStyle = "#D991BA";
-              break;
-            case 1:
-              const img = new Image()
-              img.src = "static/blocks2.png"
-              img.onload = () => {
-                layerContext.drawImage(img, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
-              }
-              // const img = new Image();
-              // img.src = "static/blocks.png";
-              // img.onload = () => {
-              //   const pattern = layerContext.createPattern(img, "no-repeat");
-              //   layerContext.fillStyle = pattern;
-              //   layerContext.fillRect(xb, yb, blockSize, blockSize);
-              // };
-              //layerContext.fillStyle = "#000000";
-              break;
-            case 2:
-              // const img2 = new Image();
-              // img2.src = "static/capy_button.png";
-              // img2.onload = () => {
-              //   const pattern = layerContext.createPattern(img2, "repeat");
-              //   layerContext.fillStyle = pattern;
-              //   layerContext.fillRect(xb, yb, blockSize, blockSize);
-              // };
-              //layerContext.fillStyle = "rgba(214, 50, 48, 1)"//"#FF0000";
-              const img3 = new Image()
-              img3.src = "static/death.png"
-              img3.onload = () => {
-                layerContext.drawImage(img3, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
-              }
-              break;
-            case 3:
-              if (isSpawn(x, y)) {
-                layerContext.fillStyle = "#00FFFF88";
-              } else layerContext.fillStyle = "#00888888";
-              const life = new Image()
-              life.src = "static/life.png"
-              life.onload = () => {
-                layerContext.drawImage(life, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
-              }
-              break;
-            case -9:
-              layerContext.fillStyle = 'rgba(255,255,255,0)'
-              backContext.fillStyle = "rgba(255, 255, 255, 0)";
-              break;
-
-            default:
-              backContext.fillStyle = "rgba(255, 255, 255, .3)";
-              layerContext.fillStyle = 'rgba(255,255,255,0)';
+              default:
+                backContext.fillStyle = "rgba(255, 255, 255, .3)";
+                layerContext.fillStyle = 'rgba(255,255,255,0)';
+                break;
             }
-            
             layerContext.fillRect(xb, yb, blockSize, blockSize);
             backContext.fillRect(xb, yb, blockSize, blockSize);
             switch(type){
@@ -149,7 +150,6 @@ function drawLevel() {
                   yb + blockSize - (blockSize / 25) * 3
                 );
                 layerContext.stroke();
-      
                 layerContext.beginPath();
                 layerContext.moveTo(
                   xb + (blockSize / 25) * 3,
