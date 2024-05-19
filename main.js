@@ -671,8 +671,8 @@ function openInfo() {
 }
 function newSave() {
   return [
-    1,
-    6,
+    0,
+    2,
     0,
     0,
     325,

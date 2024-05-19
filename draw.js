@@ -1,11 +1,21 @@
 var playerSize = 20;
 var blockSize = 50;
-var X = -2000
-var Y = -3000
-var Z = -4000
+
 let canvas = document.getElementById("playerLayer");
 let bcanv = document.getElementById("bgLayer");
 let lvlCanvas = document.getElementById("levelLayer");
+const play_norm = new Image()
+play_norm.src = "static/mc_norm.png"
+
+function onLoadPlay_norm(context,x,y,size){
+  context.drawImage(play_norm, 0, 0, 64, 64,x, y, size, size )
+}
+const play_jump = new Image()
+play_jump.src = "static/mc_jump.png"
+
+function onLoadPlay_jump(context,x,y,size){
+  context.drawImage(play_jump, 0, 0, 64, 64,x, y, size, size )
+}
 
 function drawPlayer() {
     let pL = canvas.getContext("2d");
@@ -15,20 +25,25 @@ function drawPlayer() {
     let ratio = player.currentJumps / player.maxJumps; 
     if (player.maxJumps === Infinity) ratio = 1;
     if (player.maxJumps === 0) ratio = 0;
-    pL.fillStyle = `rgb(${255 - ratio * 255},0,${ratio * 255})`; // Changing the Color 
-    if (options.darkMode)
-        pL.fillStyle = `rgb(${255 - ratio * 255 * 0.75},${255 * 0.25},${
-        ratio * 255 * 0.75 + 255 * 0.25
-        })`;
+    if (ratio === 1 ){
+      // pL.fillStyle = `#324376`;
+      onLoadPlay_norm(pL,player.x, player.y, playerSize)
+      } // Changing the Color 
+    else{
+      onLoadPlay_jump(pL,player.x, player.y, playerSize)
+      // pL.fillStyle = `#FCFCFC`; // Changing the Color 
+    }
     if (player.isDead) pL.fillStyle += "88";
-    pL.fillRect(
-        Math.floor(player.x),
-        Math.floor(player.y),
-        playerSize,
-        playerSize
-    );
+
+    // pL.fillRect(
+    //     Math.floor(player.x),
+    //     Math.floor(player.y),
+    //     playerSize,
+    //     playerSize
+    // );
     adjustScreen();
 }
+
 
 function drawLevel() {
     let layerContext = lvlCanvas.getContext("2d");
@@ -42,7 +57,7 @@ function drawLevel() {
     layerContext.clearRect(0, 0, lvlCanvas.width, lvlCanvas.height);
     backContext.clearRect(0, 0, lvlCanvas.width, lvlCanvas.height);
 
-    backContext.fillStyle = "rgba(255, 255, 255, 0)";
+    backContext.fillStyle = "rgba(255, 255, 255, .3)";
     
 
     for (let x in levels[player.currentLevel]){
@@ -56,9 +71,11 @@ function drawLevel() {
             switch(type){
 
             case X:
-              if (!player.triggers.includes(props[1])) {
-                layerContext.fillStyle = "#00880088";
-              } else layerContext.fillStyle = "#00880088";
+              const X_img = new Image()
+              X_img.src = "static/gates/x.png"
+              X_img.onload = () => {
+                layerContext.drawImage( X_img, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
+              }
               break;
             case Y:
               if (!player.triggers.includes(props[1])) {
@@ -71,13 +88,18 @@ function drawLevel() {
               } else layerContext.fillStyle = "#D991BA";
               break;
             case 1:
-              const img = new Image();
-              img.src = "static/blocks.png";
+              const img = new Image()
+              img.src = "static/blocks2.png"
               img.onload = () => {
-                const pattern = layerContext.createPattern(img, "no-repeat");
-                layerContext.fillStyle = pattern;
-                layerContext.fillRect(xb, yb, blockSize, blockSize);
-              };
+                layerContext.drawImage(img, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
+              }
+              // const img = new Image();
+              // img.src = "static/blocks.png";
+              // img.onload = () => {
+              //   const pattern = layerContext.createPattern(img, "no-repeat");
+              //   layerContext.fillStyle = pattern;
+              //   layerContext.fillRect(xb, yb, blockSize, blockSize);
+              // };
               //layerContext.fillStyle = "#000000";
               break;
             case 2:
@@ -88,16 +110,31 @@ function drawLevel() {
               //   layerContext.fillStyle = pattern;
               //   layerContext.fillRect(xb, yb, blockSize, blockSize);
               // };
-              layerContext.fillStyle = "rgba(214, 50, 48, 1)"//"#FF0000";
+              //layerContext.fillStyle = "rgba(214, 50, 48, 1)"//"#FF0000";
+              const img3 = new Image()
+              img3.src = "static/death.png"
+              img3.onload = () => {
+                layerContext.drawImage(img3, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
+              }
               break;
             case 3:
               if (isSpawn(x, y)) {
                 layerContext.fillStyle = "#00FFFF88";
-              } else layerContext.fillStyle = "#00FFFF88";
+              } else layerContext.fillStyle = "#00888888";
+              const life = new Image()
+              life.src = "static/life.png"
+              life.onload = () => {
+                layerContext.drawImage(life, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
+              }
+              break;
+            case -9:
+              layerContext.fillStyle = 'rgba(255,255,255,0)'
+              backContext.fillStyle = "rgba(255, 255, 255, 0)";
               break;
 
             default:
-              layerContext.fillStyle = 'rgba(255,255,255,0.2)';
+              backContext.fillStyle = "rgba(255, 255, 255, .3)";
+              layerContext.fillStyle = 'rgba(255,255,255,0)';
             }
             
             layerContext.fillRect(xb, yb, blockSize, blockSize);
@@ -124,19 +161,19 @@ function drawLevel() {
                 );
                 layerContext.stroke();
                 break;
-                case 3:
-                  if (isSpawn(x, y)) {
-                    layerContext.strokeStyle = "#00888888";
-                  } else layerContext.strokeStyle = "#00444488";
-                  layerContext.beginPath();
-                  layerContext.moveTo(xb + (blockSize / 25) * 3, yb + blockSize / 2);
-                  layerContext.lineTo(xb + blockSize / 2, yb + blockSize - (blockSize / 25) * 3);
-                  layerContext.lineTo(
-                    xb + blockSize - (blockSize / 25) * 3,
-                    yb + (blockSize / 25) * 3
-                  );
-                  layerContext.stroke();
-                  break;
+                // case 3:
+                //   if (isSpawn(x, y)) {
+                //     layerContext.strokeStyle = "#00888888";
+                //   } else layerContext.strokeStyle = "#00444488";
+                //   layerContext.beginPath();
+                //   layerContext.moveTo(xb + (blockSize / 25) * 3, yb + blockSize / 2);
+                //   layerContext.lineTo(xb + blockSize / 2, yb + blockSize - (blockSize / 25) * 3);
+                //   layerContext.lineTo(
+                //     xb + blockSize - (blockSize / 25) * 3,
+                //     yb + (blockSize / 25) * 3
+                //   );
+                //   layerContext.stroke();
+                //   break;
                 default:
                   break;
             }
