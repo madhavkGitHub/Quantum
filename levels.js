@@ -2,8 +2,8 @@
 var X = -2000
 var Y = -3000
 var Z = -4000
-var S = 1
-var T = 0
+var S = 1000
+var T = -1000
 const worldMap = [
     [0],
     [1],

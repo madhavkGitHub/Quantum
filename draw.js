@@ -78,14 +78,32 @@ function drawLevel() {
               }
               break;
             case Y:
-              if (!player.triggers.includes(props[1])) {
-                layerContext.fillStyle = "#D991BA";
-              } else layerContext.fillStyle = "#D991BA";
+              const Y_img = new Image()
+              Y_img.src = "static/gates/y.png"
+              Y_img.onload = () => {
+                layerContext.drawImage( Y_img, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
+              }
               break;
             case Z:
-              if (!player.triggers.includes(props[1])) {
-                layerContext.fillStyle = "#D991BA";
-              } else layerContext.fillStyle = "#D991BA";
+              const Z_img = new Image()
+              Z_img.src = "static/gates/z.png"
+              Z_img.onload = () => {
+                layerContext.drawImage( Z_img, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
+              }
+              break;
+            case S:
+              const S_img = new Image()
+              S_img.src = "static/gates/solid.png"
+              S_img.onload = () => {
+                layerContext.drawImage( S_img, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
+              }
+              break;
+            case T:
+              const T_img = new Image()
+              T_img.src = "static/gates/transparent.png"
+              T_img.onload = () => {
+                layerContext.drawImage( T_img, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
+              }
               break;
             case 1:
               const img = new Image()
