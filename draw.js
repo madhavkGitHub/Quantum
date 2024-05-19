@@ -1,5 +1,8 @@
 var playerSize = 20;
 var blockSize = 50;
+var X = -2000
+var Y = -3000
+var Z = -4000
 let canvas = document.getElementById("playerLayer");
 let bcanv = document.getElementById("bgLayer");
 let lvlCanvas = document.getElementById("levelLayer");
@@ -30,15 +33,20 @@ function drawPlayer() {
 function drawLevel() {
     let layerContext = lvlCanvas.getContext("2d");
     let backContext = bcanv.getContext("2d");
-    canvas.width = levels[player.currentLevel].length * blockSize;
-    canvas.height = levels[player.currentLevel][0].length * blockSize;
+
+    lvlCanvas.width = levels[player.currentLevel].length * blockSize;
+    lvlCanvas.height = levels[player.currentLevel][0].length * blockSize;
     bcanv.width = levels[player.currentLevel].length * blockSize;
     bcanv.height = levels[player.currentLevel][0].length * blockSize;
-    layerContext.clearRect(0, 0, canvas.width, canvas.height);
-    backContext.clearRect(0, 0, canvas.width, canvas.height);
-    backContext.fillStyle = "#FFFFFF";
+
+    layerContext.clearRect(0, 0, lvlCanvas.width, lvlCanvas.height);
+    backContext.clearRect(0, 0, lvlCanvas.width, lvlCanvas.height);
+
+    backContext.fillStyle = "rgba(255, 255, 255, 0)";
+    
+
     for (let x in levels[player.currentLevel]){
-        for (let y in levels[player.currentJumps]){
+        for (let y in levels[player.currentLevel][x]){
             layerContext.lineWidth = (blockSize * 3)/25;
             let xb = x*blockSize;
             let yb = y*blockSize;
@@ -46,13 +54,96 @@ function drawLevel() {
             let props = type;
             if (typeof type === "object") type = type[0];
             switch(type){
-                case 1:
-                    layerContext.fillStyle = "#00880088";
-                default:
-                    layerContext.fillStyle = "#00000000";
+
+            case X:
+              if (!player.triggers.includes(props[1])) {
+                layerContext.fillStyle = "#00880088";
+              } else layerContext.fillStyle = "#00880088";
+              break;
+            case Y:
+              if (!player.triggers.includes(props[1])) {
+                layerContext.fillStyle = "#D991BA";
+              } else layerContext.fillStyle = "#D991BA";
+              break;
+            case Z:
+              if (!player.triggers.includes(props[1])) {
+                layerContext.fillStyle = "#D991BA";
+              } else layerContext.fillStyle = "#D991BA";
+              break;
+            case 1:
+              const img = new Image();
+              img.src = "static/blocks.png";
+              img.onload = () => {
+                const pattern = layerContext.createPattern(img, "no-repeat");
+                layerContext.fillStyle = pattern;
+                layerContext.fillRect(xb, yb, blockSize, blockSize);
+              };
+              //layerContext.fillStyle = "#000000";
+              break;
+            case 2:
+              // const img2 = new Image();
+              // img2.src = "static/capy_button.png";
+              // img2.onload = () => {
+              //   const pattern = layerContext.createPattern(img2, "repeat");
+              //   layerContext.fillStyle = pattern;
+              //   layerContext.fillRect(xb, yb, blockSize, blockSize);
+              // };
+              layerContext.fillStyle = "rgba(214, 50, 48, 1)"//"#FF0000";
+              break;
+            case 3:
+              if (isSpawn(x, y)) {
+                layerContext.fillStyle = "#00FFFF88";
+              } else layerContext.fillStyle = "#00FFFF88";
+              break;
+
+            default:
+              layerContext.fillStyle = 'rgba(255,255,255,0.2)';
             }
+            
+            layerContext.fillRect(xb, yb, blockSize, blockSize);
+            backContext.fillRect(xb, yb, blockSize, blockSize);
+            switch(type){
+              case 2:
+                layerContext.strokeStyle = "#880000";
+                layerContext.beginPath();
+                layerContext.moveTo(xb + (blockSize / 25) * 3, yb + (blockSize / 25) * 3);
+                layerContext.lineTo(
+                  xb + blockSize - (blockSize / 25) * 3,
+                  yb + blockSize - (blockSize / 25) * 3
+                );
+                layerContext.stroke();
+      
+                layerContext.beginPath();
+                layerContext.moveTo(
+                  xb + (blockSize / 25) * 3,
+                  yb + blockSize - (blockSize / 25) * 3
+                );
+                layerContext.lineTo(
+                  xb + blockSize - (blockSize / 25) * 3,
+                  yb + (blockSize / 25) * 3
+                );
+                layerContext.stroke();
+                break;
+                case 3:
+                  if (isSpawn(x, y)) {
+                    layerContext.strokeStyle = "#00888888";
+                  } else layerContext.strokeStyle = "#00444488";
+                  layerContext.beginPath();
+                  layerContext.moveTo(xb + (blockSize / 25) * 3, yb + blockSize / 2);
+                  layerContext.lineTo(xb + blockSize / 2, yb + blockSize - (blockSize / 25) * 3);
+                  layerContext.lineTo(
+                    xb + blockSize - (blockSize / 25) * 3,
+                    yb + (blockSize / 25) * 3
+                  );
+                  layerContext.stroke();
+                  break;
+                default:
+                  break;
+            }
+            
         }
     }
+    adjustScreen();
 }
 
 var lvlx = 0;
