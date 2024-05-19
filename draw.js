@@ -100,9 +100,11 @@ function drawLevel() {
                 };
                 break;
               case Z:
-                if (!player.triggers.includes(props[1])) {
-                  layerContext.fillStyle = "#D991BA";
-                } else layerContext.fillStyle = "#D991BA";
+                const Z_img = new Image();
+                Z_img.src = "static/gates/z.png";
+                Z_img.onload = () => {
+                  backContext.drawImage( Z_img, 0, 0, 64, 64,xb, yb, blockSize, blockSize )
+                };
                 break;
               case 1:
                 const img = new Image()

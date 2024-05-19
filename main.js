@@ -6,6 +6,9 @@ var Yvar = -3000;
 var Zvar = -4000;
 var last_activation_xgate = 0;
 var last_activation_ygate = 0;
+let previous_x = 0;
+let previous_y = 0;
+
 
 var player = {
   spawnPoint: newSave(),
@@ -507,23 +510,42 @@ function nextFrame(timeStamp) {
               player.y < (y + 1) * blockSize - 0.01 &&
               player.y + playerSize > y * blockSize + 0.01
             ) {
+              console.log(x, y )
               switch (type) {
+                
                 // Checkpoint
-                case -2000:
-                  if(timeStamp - last_activation_xgate >= 1000){
+                case X:
+                  if(timeStamp - last_activation_xgate >= 500 && previous_x!==x  || previous_y!==y){
+                    console.log("X Gate")
                     last_activation_xgate = timeStamp;
                     player.solid = !player.solid;
                     shouldDrawLevel = true;
+                    previous_x = x;
+                    previous_y = y;
                   }
                   break;
-                case -3000:
-                    if(timeStamp - last_activation_ygate >= 1000){
+                case Y:
+                    if(timeStamp - last_activation_ygate >= 500 && previous_y!==y || previous_x!==x){
+                      console.log("Y Gate")
                       last_activation_ygate = timeStamp;
                       player.xvmult = 2.255 - player.xvmult;
                       player.yvmult = 2.03 - player.yvmult;
-                      shouldDrawLevel = true;
+                      previous_x = x;
+                      previous_y = y;
                     }
                     break;
+                case Z:
+                  if(timeStamp - last_activation_ygate >= 500 && previous_y!==y || previous_x!==x){
+                    console.log("Z Gate")
+                    last_activation_ygate = timeStamp;
+                    player.xvmult = 2.255 - player.xvmult;
+                    player.yvmult = 2.03 - player.yvmult;
+                    player.solid = !player.solid;
+                    previous_x = x;
+                    previous_y = y;
+                    shouldDrawLevel = true;
+                  }
+                  break;
                 case 3:
                   if (!isSpawn(x, y)) {
                     if (player.currentLevel === 8) {
@@ -548,12 +570,13 @@ function nextFrame(timeStamp) {
                       player.finalDeaths,
                       player.branchTime
                     ];
-                    player.latest_solidity = player.solid;
-                    player.latest_xvmult = player.xvmult;
-                    player.latest_yvmult = player.yvmult;
+                    player.solidity = player.latest_solidity;
+                    player.latest_xvmult = 1;
+                    player.latest_yvmult = 1;
                     shouldDrawLevel = true;
                     save();
                   }
+                  
                   break;  
                 // death block
                 case 2: 
@@ -630,6 +653,7 @@ function nextFrame(timeStamp) {
                   break;
               }
             }
+            
           }
         }
       }
@@ -800,8 +824,10 @@ function respawn(death = true) {
     player.deaths++;
     player.spawnPoint[11] = player.deaths;
     player.solid = player.latest_solidity;
-    player.xvmult = player.latest_xvmult;
-    player.yvmult = player.latest_yvmult;
+    player.xvmult = 1;
+    player.yvmult = 1;
+    previous_x = 0;
+    previous_y = 0;
     id("deathCount").innerHTML = player.deaths;
   }
   player.spawnTimer = player.spawnDelay;
